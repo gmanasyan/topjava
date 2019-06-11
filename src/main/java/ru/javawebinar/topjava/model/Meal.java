@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.model;
 
+import ru.javawebinar.topjava.crud.mealCrudMemory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -10,6 +11,8 @@ public class Meal {
     private final String description;
 
     private final int calories;
+
+    private final int id = mealCrudMemory.setId();
 
     public Meal(LocalDateTime dateTime, String description, int calories) {
         this.dateTime = dateTime;
@@ -35,5 +38,9 @@ public class Meal {
 
     public LocalTime getTime() {
         return dateTime.toLocalTime();
+    }
+
+    public int getId() {
+        return id;
     }
 }
