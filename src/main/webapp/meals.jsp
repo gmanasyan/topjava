@@ -34,24 +34,17 @@
 
     <tbody>
 
-    <c:forEach var="num" items="${list}">
+    <c:forEach var="meal" items="${list}">
 
-        <c:choose>
-            <c:when test="${num.getExcess() == true}">
-                <c:set var="mealColor" value="red-meals"/>
-            </c:when>
-            <c:otherwise>
-                <c:set var="mealColor" value="green-meals"/>
-            </c:otherwise>
-        </c:choose>
+        <c:set var="mealColor" value="${meal.getExcess() == true ? 'red-meals' : 'green-meals'}"/>
 
         <tr class="${mealColor}">
-            <td>${num.getDate()} ${num.getTime()}</td>
-            <td>${num.getDescription()}</td>
-            <td>${num.getCalories()}</td>
+            <td>${meal.getDate()} ${meal.getTime()}</td>
+            <td>${meal.getDescription()}</td>
+            <td>${meal.getCalories()}</td>
             <td>
                 <form action="meals" method="post">
-                    <input name="delete-id" id="delete-id" value="${num.getId()}" hidden >
+                    <input name="deleteId" id="deleteId" value="${meal.getId()}" hidden >
                     <button>Удалить</button>
                 </form>
             </td>
@@ -65,7 +58,6 @@
 <p> Установленно ограничений не более ${caloriesPerDay} калорий в день </p>
 <p> Красным выделены превышения нормы в день </p>
 
-<!--p> Удалить  ${delete-id}  </p-->
 
 </body>
 </html>
