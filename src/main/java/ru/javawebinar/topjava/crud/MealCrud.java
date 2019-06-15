@@ -5,10 +5,10 @@ import java.util.List;
 
 public interface MealCrud {
 
-    public boolean createMeal(Meal meal);
-    public Meal updateMeal(int id);
-    public boolean deleteMeal(int id);
-    public Meal get(int id);
-    public List<Meal> getAll();
+    Meal create(Meal meal);
+    Meal update(int id);
+    boolean delete(int id);
+    Meal get(int id);
+    List<Meal> getAll();
 
 }

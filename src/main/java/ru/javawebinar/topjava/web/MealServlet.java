@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.web;
 
+import ru.javawebinar.topjava.crud.MealCrud;
 import ru.javawebinar.topjava.crud.MealCrudMemory;
 import ru.javawebinar.topjava.model.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
@@ -12,14 +13,13 @@ import java.util.*;
 
 public class MealServlet extends HttpServlet {
 
-    private MealCrudMemory crud = MealCrudMemory.getInstance();
+    private MealCrud crud = MealCrudMemory.getInstance();
     public int caloriesPerDay = 2000;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        List<MealTo> mealsWithExcess = new ArrayList<>();
-        mealsWithExcess = MealsUtil.getFilteredWithExcess(crud.getAll(), LocalTime.MIN, LocalTime.MAX, caloriesPerDay);
+        List<MealTo> mealsWithExcess = MealsUtil.getFilteredWithExcess(crud.getAll(), LocalTime.MIN, LocalTime.MAX, caloriesPerDay);
 
         req.setAttribute("list", mealsWithExcess);
         req.setAttribute("caloriesPerDay", caloriesPerDay);
@@ -32,7 +32,7 @@ public class MealServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         int id = Integer.valueOf(req.getParameter("deleteId"));
-        if (id >= 0) crud.deleteMeal(id);
+        if (id >= 0) crud.delete(id);
 
         resp.sendRedirect("meals");
     }

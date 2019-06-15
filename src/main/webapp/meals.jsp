@@ -36,7 +36,7 @@
 
     <c:forEach var="meal" items="${list}">
 
-        <c:set var="mealColor" value="${meal.getExcess() == true ? 'red-meals' : 'green-meals'}"/>
+        <c:set var="mealColor" value="${meal.isExcess() ? 'red-meals' : 'green-meals'}"/>
 
         <tr class="${mealColor}">
             <td>${meal.getDate()} ${meal.getTime()}</td>

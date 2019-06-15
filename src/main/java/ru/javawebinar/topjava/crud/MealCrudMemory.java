@@ -10,25 +10,24 @@ import java.util.List;
 
 public class MealCrudMemory implements MealCrud {
 
-    private static int mealCount = 0;
+    private int mealCount = 0;
 
     private static MealCrudMemory singleton;
     private List<Meal> meals = new ArrayList<>();
 
     private MealCrudMemory() {
-        meals.add(new Meal(MealCrudMemory.setId(), LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500));
-        meals.add(new Meal(MealCrudMemory.setId(), LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000));
-        meals.add(new Meal(MealCrudMemory.setId(), LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500));
-        meals.add(new Meal(MealCrudMemory.setId(), LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000));
-        meals.add(new Meal(MealCrudMemory.setId(), LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500));
-        meals.add(new Meal(MealCrudMemory.setId(), LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510));
+        create(new Meal(setId(), LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500));
+        create(new Meal(setId(), LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000));
+        create(new Meal(setId(), LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500));
+        create(new Meal(setId(), LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000));
+        create(new Meal(setId(), LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500));
+        create(new Meal(setId(), LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510));
     }
 
     public static MealCrudMemory getInstance() {
         if (singleton == null) singleton = new MealCrudMemory();
         return singleton;
     }
-
 
     @Override
     public Meal get(int id) {
@@ -41,17 +40,18 @@ public class MealCrudMemory implements MealCrud {
     }
 
     @Override
-    public boolean createMeal(Meal meal) {
-        return false;
+    public Meal create(Meal meal) {
+        meals.add(meal);
+        return meals.get(meals.size()-1);
     }
 
     @Override
-    public Meal updateMeal(int id) {
+    public Meal update(int id) {
         return null;
     }
 
     @Override
-    public boolean deleteMeal(int id) {
+    public boolean delete(int id) {
 
         boolean success = false;
         try {
@@ -73,7 +73,7 @@ public class MealCrudMemory implements MealCrud {
     }
 
 
-    public static int setId() {
+    public int setId() {
         return mealCount++;
     }
 
