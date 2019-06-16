@@ -33,6 +33,14 @@ public class User extends AbstractNamedEntity {
         this.roles = roles;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public boolean isNew() {
+        return this.id == null;
+    }
+
     public String getEmail() {
         return email;
     }
