@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -38,7 +39,6 @@ public class MealRestController {
         if (startDate == null) startDate = LocalDate.MIN;
         if (endDate == null) endDate = LocalDate.MAX;
 
-        // get all meals from whole day for excess calculations
         List<MealTo> mealsWithExcess = MealsUtil.getWithExcess(
                 service.getAll(authUserId(), startDate, LocalTime.MIN, endDate, LocalTime.MAX),
                 MealsUtil.DEFAULT_CALORIES_PER_DAY);
@@ -52,9 +52,7 @@ public class MealRestController {
         LocalTime end = endTime;
 
         return mealsWithExcess.stream()
-                .filter(meal -> (meal.getTime().compareTo(start) >= 0)
-                        && (meal.getTime().compareTo(end) <= 0))
-                .sorted((meal1, meal2) -> meal2.getDateTime().compareTo(meal1.getDateTime())) //reverse
+                .filter(meal -> DateTimeUtil.isBetween(meal.getTime(), start, end))
                 .collect(Collectors.toList());
     }
 

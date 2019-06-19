@@ -10,7 +10,6 @@ import ru.javawebinar.topjava.util.UsersUtil;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -18,7 +17,6 @@ import java.util.stream.Collectors;
 public class InMemoryUserRepositoryImpl implements UserRepository {
     private static final Logger log = LoggerFactory.getLogger(InMemoryUserRepositoryImpl.class);
 
-    //private Map<String, User> repository = new ConcurrentSkipListMap<>();
     private Map<Integer, User> repository = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
 
@@ -53,7 +51,6 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     @Override
     public List<User> getAll() {
         log.info("getAll");
-        //slist = list.stream().sorted(Comparator.comparing(Student::getAge)).collect(Collectors.toList());
         List<User> usersByName = repository.values().stream()
                 .sorted(Comparator.comparing(AbstractNamedEntity::getName))
                 .collect(Collectors.toList());

@@ -7,10 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,8 +23,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
 
     private static final Logger log = getLogger(InMemoryMealRepositoryImpl.class);
 
-    private Map<Integer, Meal> repository = new ConcurrentHashMap<>();
-    private Map<Integer, Integer> userOfMeal = new ConcurrentHashMap<>();   // Map(mealId, userId)
+    private Map<Integer, Map<Integer, Meal>> repository = new ConcurrentHashMap<>();   // Map(userId, Map<mealId, meal>)
 
     private AtomicInteger counter = new AtomicInteger(0);
 
@@ -33,7 +32,6 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     }
 
     private void save(Meal meal) {
-
         save(meal, 1);
     }
 
@@ -43,27 +41,30 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         if (meal.isNew()) {
             log.info("New meal {}", meal);
             meal.setId(counter.incrementAndGet());
-            repository.put(meal.getId(), meal);
-            userOfMeal.put(meal.getId(), userId);
+
+            Map<Integer, Meal> meals = repository.getOrDefault(userId, null);
+            if (meals == null)
+                meals = new HashMap<>();
+
+            meals.put(meal.getId(), meal);
+
+            repository.merge(userId, meals, (oldMeals, newMeals) -> newMeals);
             return meal;
         }
 
-        // user try update not his meal
-        if (userOfMeal.get(meal.getId()) != userId) {
+        if (repository.get(userId).get(meal.getId()) == null ) {
             log.error("Access denaid to update not user meal {}", userId, meal);
             return null;
         }
 
         log.info("Update meal {}", meal);
-        // treat case: update, but absent in storage
-        return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
+        return repository.get(userId).computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
     @Override
     public boolean delete(int id, int userId) {
-        if (userOfMeal.get(id).equals(userId)) {
-            userOfMeal.remove(id);
-            return repository.remove(id) != null;
+        if (repository.get(userId).get(id) != null) {
+            return repository.get(userId).remove(id) != null;
         }
         else
             return false;
@@ -72,40 +73,27 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     @Override
     public Meal get(int id, int userId) {
         log.info("Get meal {}", id);
-        if (userOfMeal.get(id) == userId) {
-            return repository.get(id);
-        }
+        if (repository.get(userId).get(id) != null)
+            return repository.get(userId).get(id);
         else
             return null;
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return repository.entrySet().stream()
-                .filter(setItem -> userOfMeal.get(setItem.getKey()).equals(userId))
-                .map(setItem -> setItem.getValue())
-                //.sorted(Comparator.comparing(meal -> meal.getDate()))
-                .sorted((meal1, meal2) -> meal2.getDateTime().compareTo(meal1.getDateTime())) //reverse
+        return repository.get(userId).values().stream()
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<Meal> getAll(int userId, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
-
-        return repository.entrySet().stream()
-                .filter(setItem -> userOfMeal.get(setItem.getKey()).equals(userId))
-                .map(setItem -> setItem.getValue())
-                .filter(meal -> (meal.getDate().isEqual(startDate)
-                        || meal.getDate().isEqual(endDate)
-                        || (meal.getDate().isAfter(startDate) && meal.getDate().isBefore(endDate))
-                ))
-                .filter(meal -> (meal.getTime().compareTo(startTime) >= 0)
-                        && (meal.getTime().compareTo(endTime) <= 0)
+        return getAll(userId).stream()
+                .filter(meal -> DateTimeUtil.isBetweenDate(meal.getDate(), startDate, endDate))
+                .filter(meal -> DateTimeUtil.isBetween(meal.getTime(), startTime, endTime)
                 )
-                .sorted((meal1, meal2) -> meal2.getDateTime().compareTo(meal1.getDateTime())) //reverse
                 .collect(Collectors.toList());
     }
-
 
 }
 
