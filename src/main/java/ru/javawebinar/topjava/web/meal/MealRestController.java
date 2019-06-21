@@ -39,21 +39,14 @@ public class MealRestController {
         if (startDate == null) startDate = LocalDate.MIN;
         if (endDate == null) endDate = LocalDate.MAX;
 
-        List<MealTo> mealsWithExcess = MealsUtil.getWithExcess(
-                service.getAll(authUserId(), startDate, LocalTime.MIN, endDate, LocalTime.MAX),
-                MealsUtil.DEFAULT_CALORIES_PER_DAY);
-
-        log.info("getAllByRange items {}", mealsWithExcess.size());
-
         if (startTime == null) startTime = LocalTime.MIN;
         if (endTime == null) endTime = LocalTime.MAX;
 
-        LocalTime start = startTime;
-        LocalTime end = endTime;
+        log.info("getAllByRange items");
 
-        return mealsWithExcess.stream()
-                .filter(meal -> DateTimeUtil.isBetween(meal.getTime(), start, end))
-                .collect(Collectors.toList());
+        return MealsUtil.getFilteredWithExcess(
+                service.getAll(authUserId(), startDate, LocalTime.MIN, endDate, LocalTime.MAX),
+                MealsUtil.DEFAULT_CALORIES_PER_DAY, startTime, endTime);
     }
 
     public void delete (int id) throws NotFoundException {
@@ -61,6 +54,10 @@ public class MealRestController {
     }
 
     public Meal save (Meal meal) throws NotFoundException {
+        return service.save(meal, authUserId());
+    }
+
+    public Meal create (Meal meal) throws NotFoundException {
         return service.save(meal, authUserId());
     }
 

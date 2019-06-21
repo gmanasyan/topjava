@@ -42,9 +42,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
             log.info("New meal {}", meal);
             meal.setId(counter.incrementAndGet());
 
-            Map<Integer, Meal> meals = repository.getOrDefault(userId, null);
-            if (meals == null)
-                meals = new HashMap<>();
+            Map<Integer, Meal> meals = repository.getOrDefault(userId, new HashMap<>());
 
             meals.put(meal.getId(), meal);
 
@@ -52,7 +50,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
             return meal;
         }
 
-        if (repository.get(userId).get(meal.getId()) == null ) {
+        if ((repository.get(userId) != null) && (repository.get(userId).get(meal.getId()) == null )) {
             log.error("Access denaid to update not user meal {}", userId, meal);
             return null;
         }
@@ -63,7 +61,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
 
     @Override
     public boolean delete(int id, int userId) {
-        if (repository.get(userId).get(id) != null) {
+        if ((repository.get(userId) != null) && (repository.get(userId).get(id) != null)) {
             return repository.get(userId).remove(id) != null;
         }
         else
@@ -73,7 +71,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     @Override
     public Meal get(int id, int userId) {
         log.info("Get meal {}", id);
-        if (repository.get(userId).get(id) != null)
+        if ((repository.get(userId) != null) && (repository.get(userId).get(id) != null))
             return repository.get(userId).get(id);
         else
             return null;
@@ -88,7 +86,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
-        return getAll(userId).stream()
+        return repository.get(userId).values().stream()
                 .filter(meal -> DateTimeUtil.isBetweenDate(meal.getDate(), startDate, endDate))
                 .filter(meal -> DateTimeUtil.isBetween(meal.getTime(), startTime, endTime)
                 )
