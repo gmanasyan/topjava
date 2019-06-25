@@ -22,6 +22,9 @@ public class InMemoryAdminRestControllerTest {
         appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
         System.out.println("\n" + Arrays.toString(appCtx.getBeanDefinitionNames()) + "\n");
         controller = appCtx.getBean(AdminRestController.class);
+
+        System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
+        System.out.println("Stop");
     }
 
     @AfterClass

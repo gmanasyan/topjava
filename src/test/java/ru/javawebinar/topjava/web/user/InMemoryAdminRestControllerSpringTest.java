@@ -29,10 +29,13 @@ public class InMemoryAdminRestControllerSpringTest {
     @Before
     public void setUp() throws Exception {
         repository.init();
+        controller.setRepository(repository);
     }
 
     @Test
     public void delete() throws Exception {
+        controller.getAll().forEach(System.out::println);
+
         controller.delete(UserTestData.USER_ID);
         Collection<User> users = controller.getAll();
         Assert.assertEquals(users.size(), 1);

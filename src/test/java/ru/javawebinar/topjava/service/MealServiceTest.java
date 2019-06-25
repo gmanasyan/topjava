@@ -1,0 +1,116 @@
+package ru.javawebinar.topjava.service;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.slf4j.bridge.SLF4JBridgeHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
+import org.springframework.test.context.junit4.SpringRunner;
+import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.junit.Assert.*;
+import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
+
+
+@ContextConfiguration({
+        "classpath:spring/spring-app.xml",
+        "classpath:spring/spring-db.xml"
+})
+@RunWith(SpringRunner.class)
+@Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
+
+public class MealServiceTest {
+
+
+    static {
+        // Only for postgres driver logging
+        // It uses java.util.logging and logged via jul-to-slf4j bridge
+        SLF4JBridgeHandler.install();
+    }
+
+    @Autowired
+    private MealService service;
+
+    @Test
+    public void get() {
+        Meal meal = service.get(START_SEQ + 2, USER_ID);
+        assertMatch(meal, MEALS.get(0));
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void getNotFound() {
+        Meal meal = service.get(START_SEQ + 2, USER_ID + 1);
+        assertMatch(meal, MEALS.get(0));
+    }
+
+    @Test
+    public void delete() throws Exception  {
+        service.delete(START_SEQ + 2, USER_ID);
+        List<Meal> meals = new ArrayList<>(MEALS);
+        meals.remove(0);
+        assertMatch(service.getAll(USER_ID), meals);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void deletedNotFound() throws Exception {
+        service.delete(START_SEQ + 2, USER_ID + 1);
+        List<Meal> meals = new ArrayList<>(MEALS);
+        meals.remove(0);
+        assertMatch(service.getAll(USER_ID), meals);
+    }
+
+    @Test
+    public void getBetweenDates() {
+        List<Meal> all = service.getBetweenDates(LocalDate.of(2019, Month.MAY, 01), LocalDate.of(2019, Month.MAY, 30),  USER_ID);
+        assertMatch(all, MEALS.subList(0, 3));
+    }
+
+    @Test
+    public void getBetweenDateTimes() {
+        List<Meal> all = service.getBetweenDateTimes(LocalDateTime.of(2019, Month.MAY, 01, 10, 0), LocalDateTime.of(2019, Month.MAY, 31,12, 0 ),  USER_ID);
+        assertMatch(all,  MEALS.subList(0, 4));
+    }
+
+    @Test
+    public void getAll() {
+        List<Meal> all = service.getAll(USER_ID);
+        assertMatch(all, MEALS);
+    }
+
+    @Test
+    public void update() {
+        Meal updated = MEALS.get(0);
+        updated.setCalories(3000);
+        service.update(updated, USER_ID);
+        assertMatch(service.get(START_SEQ + 2, USER_ID), updated);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void updateNotFound() throws Exception {
+        Meal updated = MEALS.get(0);
+        updated.setCalories(3000);
+        service.update(updated, USER_ID + 1);
+        assertMatch(service.get(START_SEQ + 2, USER_ID), updated);
+    }
+
+    @Test
+    public void create() {
+        Meal newMeal = new Meal(null, LocalDateTime.of(2019, Month.JUNE, 24, 10, 0), "Завтрак", 1500);
+        Meal created = service.create(newMeal, USER_ID);
+        newMeal.setId(created.getId());
+        assertMatch(service.get(created.getId(), USER_ID), newMeal);
+
+    }
+}

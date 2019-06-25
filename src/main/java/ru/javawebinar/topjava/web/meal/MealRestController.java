@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
@@ -13,6 +14,7 @@ import ru.javawebinar.topjava.web.SecurityUtil;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
@@ -21,11 +23,17 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 public class MealRestController {
     private static final Logger log = LoggerFactory.getLogger(MealRestController.class);
 
-    private final MealService service;
+    private MealService service;
 
     @Autowired
     public MealRestController(MealService service) {
         this.service = service;
+    }
+
+
+    public void setRepository(MealRepository repository) {
+        log.info("setRepository");
+        this.service = new MealService(repository);
     }
 
     public Meal get(int id) {
@@ -43,6 +51,7 @@ public class MealRestController {
     public List<MealTo> getAll() {
         int userId = SecurityUtil.authUserId();
         log.info("getAll for user {}", userId);
+
         return MealsUtil.getWithExcess(service.getAll(userId), SecurityUtil.authUserCaloriesPerDay());
     }
 
