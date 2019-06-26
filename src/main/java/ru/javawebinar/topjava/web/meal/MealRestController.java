@@ -31,11 +31,6 @@ public class MealRestController {
     }
 
 
-    public void setRepository(MealRepository repository) {
-        log.info("setRepository");
-        this.service = new MealService(repository);
-    }
-
     public Meal get(int id) {
         int userId = SecurityUtil.authUserId();
         log.info("get meal {} for user {}", id, userId);

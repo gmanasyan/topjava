@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.UserTestData.*;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 
@@ -45,42 +46,42 @@ public class MealServiceTest {
 
     @Test
     public void get() {
-        Meal meal = service.get(START_SEQ + 2, USER_ID);
-        assertMatch(meal, MEALS.get(0));
+        Meal meal = service.get(MEAL6.getId(), USER_ID);
+        assertMatch(meal, MEAL6);
     }
 
     @Test(expected = NotFoundException.class)
     public void getNotFound() {
-        Meal meal = service.get(START_SEQ + 2, USER_ID + 1);
-        assertMatch(meal, MEALS.get(0));
+        Meal meal = service.get(MEAL6.getId(), ADMIN_ID);
+        assertMatch(meal, MEAL6);
     }
 
     @Test
     public void delete() throws Exception  {
-        service.delete(START_SEQ + 2, USER_ID);
+        service.delete(MEAL6.getId(), USER_ID);
         List<Meal> meals = new ArrayList<>(MEALS);
-        meals.remove(0);
+        meals.remove(5);
         assertMatch(service.getAll(USER_ID), meals);
     }
 
     @Test(expected = NotFoundException.class)
     public void deletedNotFound() throws Exception {
-        service.delete(START_SEQ + 2, USER_ID + 1);
+        service.delete(MEAL6.getId(), ADMIN_ID);
         List<Meal> meals = new ArrayList<>(MEALS);
-        meals.remove(0);
+        meals.remove(MEAL6);
         assertMatch(service.getAll(USER_ID), meals);
     }
 
     @Test
     public void getBetweenDates() {
         List<Meal> all = service.getBetweenDates(LocalDate.of(2019, Month.MAY, 01), LocalDate.of(2019, Month.MAY, 30),  USER_ID);
-        assertMatch(all, MEALS.subList(0, 3));
+        assertMatch(all, MEALS.subList(3, 6));
     }
 
     @Test
     public void getBetweenDateTimes() {
         List<Meal> all = service.getBetweenDateTimes(LocalDateTime.of(2019, Month.MAY, 01, 10, 0), LocalDateTime.of(2019, Month.MAY, 31,12, 0 ),  USER_ID);
-        assertMatch(all,  MEALS.subList(0, 4));
+        assertMatch(all,  MEALS.subList(2, 6));
     }
 
     @Test
@@ -91,18 +92,18 @@ public class MealServiceTest {
 
     @Test
     public void update() {
-        Meal updated = MEALS.get(0);
+        Meal updated = MEAL1;
         updated.setCalories(3000);
         service.update(updated, USER_ID);
-        assertMatch(service.get(START_SEQ + 2, USER_ID), updated);
+        assertMatch(service.get(MEAL1.getId(), USER_ID), updated);
     }
 
     @Test(expected = NotFoundException.class)
     public void updateNotFound() throws Exception {
-        Meal updated = MEALS.get(0);
+        Meal updated = MEAL1;
         updated.setCalories(3000);
-        service.update(updated, USER_ID + 1);
-        assertMatch(service.get(START_SEQ + 2, USER_ID), updated);
+        service.update(updated, ADMIN_ID);
+        assertMatch(service.get(MEAL1.getId(), USER_ID), updated);
     }
 
     @Test

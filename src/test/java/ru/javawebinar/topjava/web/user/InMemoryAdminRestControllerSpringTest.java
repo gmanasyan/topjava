@@ -9,6 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.repository.inmemory.InMemoryMealRepository;
 import ru.javawebinar.topjava.repository.inmemory.InMemoryUserRepository;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -16,20 +17,21 @@ import java.util.Collection;
 
 import static ru.javawebinar.topjava.UserTestData.ADMIN;
 
-@ContextConfiguration("classpath:spring/spring-app.xml")
+@ContextConfiguration("classpath:spring/spring-inmemory.xml")
 @RunWith(SpringRunner.class)
 public class InMemoryAdminRestControllerSpringTest {
 
     @Autowired
     private AdminRestController controller;
 
+
     @Autowired
     private InMemoryUserRepository repository;
+
 
     @Before
     public void setUp() throws Exception {
         repository.init();
-        controller.setRepository(repository);
     }
 
     @Test
