@@ -51,17 +51,14 @@ public class JdbcMealRepository implements MealRepository {
                 .addValue("calories", meal.getCalories())
                 .addValue("user_id", userId);
 
-        try {
-            if (meal.isNew()) {
-                Number newKey = insertMeal.executeAndReturnKey(map);
-                meal.setId(newKey.intValue());
-            } else if (namedParameterJdbcTemplate.update(
-                    "UPDATE meals SET date_time=:date_time, description=:description, calories=:calories " +
-                            " WHERE id=:id AND user_id=:user_id", map) == 0) {
-                return null;
-            }
-        } catch (Exception e) {
-            log.error("Can't create or update meal. Perhaps duplicated date and time.");
+
+        if (meal.isNew()) {
+            Number newKey = insertMeal.executeAndReturnKey(map);
+            meal.setId(newKey.intValue());
+        } else if (namedParameterJdbcTemplate.update(
+                "UPDATE meals SET date_time=:date_time, description=:description, calories=:calories " +
+                        " WHERE id=:id AND user_id=:user_id", map) == 0) {
+            return null;
         }
 
         return meal;

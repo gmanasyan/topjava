@@ -53,7 +53,6 @@ public class MealServiceTest {
     @Test(expected = NotFoundException.class)
     public void getNotFound() {
         Meal meal = service.get(MEAL6.getId(), ADMIN_ID);
-        assertMatch(meal, MEAL6);
     }
 
     @Test
@@ -67,20 +66,18 @@ public class MealServiceTest {
     @Test(expected = NotFoundException.class)
     public void deletedNotFound() throws Exception {
         service.delete(MEAL6.getId(), ADMIN_ID);
-        List<Meal> meals = new ArrayList<>(MEALS);
-        meals.remove(MEAL6);
-        assertMatch(service.getAll(USER_ID), meals);
+
     }
 
     @Test
     public void getBetweenDates() {
-        List<Meal> all = service.getBetweenDates(LocalDate.of(2019, Month.MAY, 01), LocalDate.of(2019, Month.MAY, 30),  USER_ID);
+        List<Meal> all = service.getBetweenDates(LocalDate.of(2019, Month.MAY, 1), LocalDate.of(2019, Month.MAY, 30),  USER_ID);
         assertMatch(all, MEALS.subList(3, 6));
     }
 
     @Test
     public void getBetweenDateTimes() {
-        List<Meal> all = service.getBetweenDateTimes(LocalDateTime.of(2019, Month.MAY, 01, 10, 0), LocalDateTime.of(2019, Month.MAY, 31,12, 0 ),  USER_ID);
+        List<Meal> all = service.getBetweenDateTimes(LocalDateTime.of(2019, Month.MAY, 1, 10, 0), LocalDateTime.of(2019, Month.MAY, 31,12, 0 ),  USER_ID);
         assertMatch(all,  MEALS.subList(2, 6));
     }
 
@@ -92,7 +89,7 @@ public class MealServiceTest {
 
     @Test
     public void update() {
-        Meal updated = MEAL1;
+        Meal updated = new Meal(MEAL1);
         updated.setCalories(3000);
         service.update(updated, USER_ID);
         assertMatch(service.get(MEAL1.getId(), USER_ID), updated);
@@ -100,10 +97,10 @@ public class MealServiceTest {
 
     @Test(expected = NotFoundException.class)
     public void updateNotFound() throws Exception {
-        Meal updated = MEAL1;
+        Meal updated = new Meal(MEAL1);
         updated.setCalories(3000);
         service.update(updated, ADMIN_ID);
-        assertMatch(service.get(MEAL1.getId(), USER_ID), updated);
+
     }
 
     @Test
