@@ -30,7 +30,6 @@ public class MealTestData {
 
     static {
         MEALS.forEach(meal -> meal.setUser(USER) );
-
         ADMIN_MEAL1.setUser(ADMIN);
         ADMIN_MEAL2.setUser(ADMIN);
     }

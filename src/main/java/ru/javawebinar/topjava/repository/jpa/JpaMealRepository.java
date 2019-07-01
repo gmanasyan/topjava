@@ -33,6 +33,7 @@ public class JpaMealRepository implements MealRepository {
             //User ref = em.getReference(User.class, userId);
             //meal.setUser(ref);
 
+
             // EAGER
             User user =  em.find(User.class, userId);
             meal.setUser(user);
