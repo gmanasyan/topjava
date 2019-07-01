@@ -37,7 +37,6 @@ public class JpaMealRepository implements MealRepository {
             User user =  em.find(User.class, userId);
             meal.setUser(user);
 
-
             meal.setDateTime(LocalDateTime.now().withNano(0));
             em.persist(meal);
             return meal;
