@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
+import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
@@ -22,10 +23,12 @@ public class MealRestController {
     private static final Logger log = LoggerFactory.getLogger(MealRestController.class);
 
     private final MealService service;
+    private final UserService serviceUser;
 
     @Autowired
-    public MealRestController(MealService service) {
+    public MealRestController(MealService service, UserService serviceUser) {
         this.service = service;
+        this.serviceUser = serviceUser;
     }
 
     public Meal get(int id) {
@@ -55,6 +58,8 @@ public class MealRestController {
 
     public void update(Meal meal, int id) {
         int userId = SecurityUtil.authUserId();
+        meal.setUser(serviceUser.get(userId));
+
         assureIdConsistent(meal, id);
         log.info("update {} for user {}", meal, userId);
         service.update(meal, userId);

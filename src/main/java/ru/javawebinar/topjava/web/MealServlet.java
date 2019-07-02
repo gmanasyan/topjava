@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.web;
 
+import org.hsqldb.auth.AuthUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.StringUtils;

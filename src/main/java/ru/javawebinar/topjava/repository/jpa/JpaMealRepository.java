@@ -29,16 +29,13 @@ public class JpaMealRepository implements MealRepository {
     public Meal save(Meal meal, int userId) {
 
         if (meal.isNew()) {
+
             // If LAZY works
             //User ref = em.getReference(User.class, userId);
             //meal.setUser(ref);
 
-
-            // EAGER
             User user =  em.find(User.class, userId);
             meal.setUser(user);
-
-            meal.setDateTime(LocalDateTime.now().withNano(0));
             em.persist(meal);
             return meal;
         } else if (em.createNamedQuery(Meal.UPDATE)
@@ -48,13 +45,13 @@ public class JpaMealRepository implements MealRepository {
                 .setParameter("calories", meal.getCalories())
                 .setParameter("dateTime", meal.getDateTime())
                 .executeUpdate() == 0) {
-          return null;
+            return null;
         }
         return meal;
+
     }
 
     @Override
-
     public boolean delete(int id, int userId) {
         return em.createNamedQuery(Meal.DELETE)
                 .setParameter("id", id)
@@ -63,7 +60,6 @@ public class JpaMealRepository implements MealRepository {
     }
 
     @Override
-
     public Meal get(int id, int userId) {
 
         return em.createNamedQuery(Meal.GET, Meal.class)
@@ -79,7 +75,7 @@ public class JpaMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
-        return em.createNamedQuery(Meal.ALL_SORTED, Meal.class)
+        return em.createNamedQuery(Meal.ALL_FILTERED, Meal.class)
                 .setParameter("id", userId)
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
