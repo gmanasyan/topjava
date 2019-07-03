@@ -11,23 +11,17 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @NamedQueries({
-        @NamedQuery(name = Meal.UPDATE, query = "UPDATE Meal m SET m.dateTime =:dateTime, m.description =:description, " +
-                "m.calories =:calories WHERE m.id=:id AND m.user.id =:userId"),
         @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal u WHERE u.id=:id AND u.user.id =:userId"),
-        @NamedQuery(name = Meal.GET, query = "SELECT u FROM Meal u WHERE u.id=:id AND u.user.id = :userId"),
-        @NamedQuery(name = Meal.ALL_FILTERED, query = "SELECT u FROM Meal u  WHERE u.user.id=:id " +
+        @NamedQuery(name = Meal.ALL_FILTERED, query = "SELECT u FROM Meal u  WHERE u.user.id=:userId " +
                 "AND u.dateTime >= :startDate AND u.dateTime <= :endDate ORDER BY u.dateTime DESC"),
-        @NamedQuery(name = Meal.ALL, query = "SELECT u FROM Meal u WHERE u.user.id=:id ORDER BY u.dateTime DESC")
+        @NamedQuery(name = Meal.ALL, query = "SELECT u FROM Meal u WHERE u.user.id=:userId ORDER BY u.dateTime DESC")
 })
 
 @Entity
 @Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meals_unique_user_datetime_idx")})
 public class Meal extends AbstractBaseEntity {
 
-
-    public static final String UPDATE = "Meal.update";
     public static final String DELETE = "Meal.delete";
-    public static final String GET = "Meal.get";
     public static final String ALL_FILTERED = "Meal.getAllFiltered";
     public static final String ALL = "Meal.getAll";
 
@@ -44,7 +38,7 @@ public class Meal extends AbstractBaseEntity {
     @Range(min = 10, max = 5000)
     private int calories;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @NotNull
     private User user;
