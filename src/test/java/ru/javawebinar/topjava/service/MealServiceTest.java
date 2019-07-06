@@ -68,6 +68,7 @@ public class MealServiceTest {
         }
     };
 
+
     @ClassRule
     public static final ExternalResource resource = new ExternalResource() {
         @Override
