@@ -11,7 +11,6 @@ public abstract class AbstractBaseEntity {
     @Id
     @SequenceGenerator(name = "global_seq", sequenceName = "global_seq", allocationSize = 1, initialValue = START_SEQ)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq")
-    @Column(name = "id", nullable = false)
     protected Integer id;
 
     protected AbstractBaseEntity() {

@@ -57,8 +57,6 @@
                   p:showSql="${jpa.showSql}">
             </bean>
         </property>
-
-
     </bean>
 
     <tx:annotation-driven/>
