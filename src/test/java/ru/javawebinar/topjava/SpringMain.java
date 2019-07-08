@@ -1,7 +1,10 @@
 package ru.javawebinar.topjava;
 
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.to.MealTo;
@@ -14,9 +17,15 @@ import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
+@Configuration
+@Profile({"postgres","jpa"})
+
 public class SpringMain {
     public static void main(String[] args) {
         // java 7 automatic resource management
+
+        System.setProperty("spring.profiles.active", "postgres, jpa");
+
         try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/inmemory.xml")) {
             System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
             AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
