@@ -27,17 +27,4 @@ public class Profiles {
         }
     }
 
-
-    public static String getActiveRepositoryProfile() {
-        try {
-            //<jpa:repositories base-package="ru.javawebinar.**.repository.jpa"/>
-            Class.forName("ru.javawebinar.topjava.repository.jpa");
-            return JPA;
-        } catch (ClassNotFoundException ex) {
-            throw new IllegalStateException("Could not find Repository");
-        }
-
-
-
-    }
 }
