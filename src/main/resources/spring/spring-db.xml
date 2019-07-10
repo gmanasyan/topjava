@@ -12,6 +12,12 @@
        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
 
+    <jdbc:initialize-database data-source="dataSource" enabled="${database.init}">
+        <jdbc:script location="classpath:db/${jdbc.initLocation}"/>
+        <jdbc:script encoding="utf-8" location="classpath:db/populateDB.sql"/>
+    </jdbc:initialize-database>
+
+
     <!-- Database profiles -->
     <beans profile="hsqldb">
         <context:property-placeholder location="classpath:db/hsqldb.properties" system-properties-mode="OVERRIDE"/>
@@ -49,12 +55,7 @@
     <!-- Repository profiles -->
     <beans profile="jdbc">
 
-        <jdbc:initialize-database data-source="dataSource" enabled="${database.init}">
-            <jdbc:script location="classpath:db/${jdbc.initLocation}"/>
-            <jdbc:script encoding="utf-8" location="classpath:db/populateDB.sql"/>
-        </jdbc:initialize-database>
-
-        <context:component-scan base-package="ru.javawebinar.**.repository.jdbc"/>
+            <context:component-scan base-package="ru.javawebinar.**.repository.jdbc"/>
 
         <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
             <constructor-arg ref="dataSource"/>

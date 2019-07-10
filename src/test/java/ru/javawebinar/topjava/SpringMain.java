@@ -17,14 +17,13 @@ import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
-@Configuration
-@Profile({"postgres","jpa"})
-
 public class SpringMain {
     public static void main(String[] args) {
         // java 7 automatic resource management
 
-        System.setProperty("spring.profiles.active", "postgres, jpa");
+        System.setProperty("spring.profiles.active",
+                Profiles.getActiveDbProfile() + ", " +
+                        Profiles.REPOSITORY_IMPLEMENTATION);
 
         try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/inmemory.xml")) {
             System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));

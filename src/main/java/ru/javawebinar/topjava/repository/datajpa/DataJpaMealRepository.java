@@ -24,13 +24,8 @@ public class DataJpaMealRepository implements MealRepository {
             return null;
         }
         meal.setUser(crudUserRepository.getOne(userId));
-        if (meal.isNew()) {
-            crudRepository.save(meal);
-            return meal;
-        } else {
-            return crudRepository.save(meal);
-        }
-    }
+        return crudRepository.save(meal);
+   }
 
     @Override
     public boolean delete(int id, int userId) {

@@ -39,7 +39,7 @@ public class UserService {
         return checkNotFoundWithId(repository.get(id), id);
     }
 
-    public User getByEmail(String email) throws NotFoundException {
+     public User getByEmail(String email) throws NotFoundException {
         Assert.notNull(email, "email must not be null");
         return checkNotFound(repository.getByEmail(email), "email=" + email);
     }
