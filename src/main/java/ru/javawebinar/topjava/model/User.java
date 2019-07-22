@@ -53,16 +53,19 @@ public class User extends AbstractNamedEntity {
     @Range(min = 10, max = 10000)
     private int caloriesPerDay = DEFAULT_CALORIES_PER_DAY;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, mappedBy = "id")
-    private List<Meal> meals = new ArrayList<>();
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, mappedBy = "user")
+    private List<Meal> meals;
 
     public User() {
     }
 
     public void setMeals(List<Meal> meals)
     {
-        meals.clear();
-        meals.addAll(meals);
+        if (meals == null) this.meals = null;
+        else {
+            this.meals = new ArrayList<>();
+            this.meals.addAll(meals);
+        }
     }
 
     public List<Meal> getMeals()

@@ -23,6 +23,12 @@ public class InMemoryUserRepository extends InMemoryBaseRepository<User> impleme
         entryMap.put(UserTestData.ADMIN_ID, ADMIN);
     }
 
+
+    @Override
+    public User getWithMeals(int id) {
+        return null;
+    }
+
     @Override
     public List<User> getAll() {
         return getCollection().stream()
