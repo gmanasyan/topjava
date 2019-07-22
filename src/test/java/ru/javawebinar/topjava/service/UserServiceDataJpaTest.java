@@ -3,6 +3,6 @@ package ru.javawebinar.topjava.service;
 
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles({"datajpa"})
+@ActiveProfiles({"postgres","datajpa"})
 public class UserServiceDataJpaTest extends UserServiceTest {
 }
