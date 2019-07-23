@@ -67,6 +67,7 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Test
     public void get() throws Exception {
+        cacheManager.getCache("users").clear();
         User user = service.get(USER_ID);
         assertMatch(user, USER);
     }
