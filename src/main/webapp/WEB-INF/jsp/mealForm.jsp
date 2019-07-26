@@ -8,7 +8,7 @@
 <jsp:include page="fragments/bodyHeader.jsp"/>
 
 <section>
-    <h3><a href="/topjava"><spring:message code="app.home"/></a></h3>
+    <h3><a href="."><spring:message code="app.home"/></a></h3>
     <hr>
 
     <spring:message code="meal.createMeal" var="create"/>
@@ -17,7 +17,7 @@
     <h2>${action == 'create' ? create : edit }</h2>
 
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
-    <form method="post" action="/topjava/meals">
+    <form method="post" action="meals">
         <input type="hidden" name="id" value="${meal.id}">
         <dl>
             <dt><spring:message code="meal.dateTime"/>:</dt>

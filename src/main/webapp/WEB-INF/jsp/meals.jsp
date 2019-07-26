@@ -9,11 +9,10 @@
 <jsp:include page="fragments/bodyHeader.jsp"/>
 
 <section>
-    <h3><a href="/topjava"><spring:message code="app.home"/></a></h3>
+    <h3><a href="."><spring:message code="app.home"/></a></h3>
     <hr/>
     <h2><spring:message code="meal.title"/></h2>
-    <form method="get" action="meals">
-        <input type="hidden" name="action" value="filter">
+    <form method="get" action="meals/filter">
         <dl>
             <dt><spring:message code="common.from"/></dt>
             <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
