@@ -5,3 +5,4 @@ target
 log
 Patch
 *.patch
+/config/REST-Project-topjava-soapui-project.xml
