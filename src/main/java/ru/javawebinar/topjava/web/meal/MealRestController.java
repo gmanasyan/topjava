@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.web.meal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -69,6 +70,10 @@ public class MealRestController extends AbstractMealController {
         return super.create(meal);
     }
 
+
+    /*
+        First version - string parameters from request
+    */
 //    @GetMapping("/filter")
 //    public List<MealTo> getBetween(
 //            @RequestParam(required=false) String startDate,
@@ -81,24 +86,59 @@ public class MealRestController extends AbstractMealController {
 //        LocalTime eTime = parseLocalTime(endTime);
 //        return super.getBetween(sDate, sTime, eDate, eTime);
 //    }
+//
+//
+//
 
+    /*
+        Second version - with @DateTimeFormat
+    */
+//    @GetMapping("/filter")
+//    public List<MealTo> getBetween(
+//            @Nullable @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+//            @Nullable @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+//            @Nullable @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
+//            @Nullable @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime) {
+//
+//        return super.getBetween(
+//               (startDate != null) ? startDate.toLocalDate() : null,
+//               (startTime != null) ? startTime.toLocalTime() : null,
+//               (endDate != null) ? endDate.toLocalDate() : null,
+//               (endTime != null) ? endTime.toLocalTime() : null);
+//
+//    }
+
+
+    /*
+        Third version - optional
+    */
     @GetMapping("/filter")
     public List<MealTo> getBetween(
-            @Nullable @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @Nullable @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
-            @Nullable @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
-            @Nullable @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime) {
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String startTime,
+            @RequestParam(required = false) String endTime) {
+
+        final class StringToLocalDate implements Converter<String, LocalDate> {
+            public LocalDate convert(String source) {
+                return parseLocalDate(source);
+            }
+        }
+
+        final class StringToLocalTime implements Converter<String, LocalTime> {
+            public LocalTime convert(String source) {
+                return parseLocalTime(source);
+            }
+        }
+
+        StringToLocalDate stringToLocalDate = new StringToLocalDate();
+        StringToLocalTime stringToLocalTime = new StringToLocalTime();
 
         return super.getBetween(
-               (startDate != null) ? startDate.toLocalDate() : null,
-               (startTime != null) ? startTime.toLocalTime() : null,
-               (endDate != null) ? endDate.toLocalDate() : null,
-               (endTime != null) ? endTime.toLocalTime() : null);
+                stringToLocalDate.convert(startDate),
+                stringToLocalTime.convert(startTime),
+                stringToLocalDate.convert(endDate),
+                stringToLocalTime.convert(endTime));
 
     }
-
-
-
-
-
 }

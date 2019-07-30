@@ -88,12 +88,25 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .andExpect(contentJson(newMeal));
     }
 
+    /* Test for Second version */
+//    @Test
+//    void getBetween() throws Exception {
+//        mockMvc.perform(get(REST_URL+"/filter?startDate=2015-05-31T10:15:30"))
+//                .andExpect(status().isOk())
+//                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+//                .andDo(print())
+//                .andExpect(contentJson(MEAL6, MEAL5, MEAL4));
+//    }
+
+
+    /* Test for third version */
     @Test
     void getBetween() throws Exception {
-        mockMvc.perform(get(REST_URL+"/filter?startDate=2015-05-31T10:15:30"))
+        mockMvc.perform(get(REST_URL+"/filter?startDate=2015-05-31"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(contentJson(MEAL6, MEAL5, MEAL4));
     }
+
 }
