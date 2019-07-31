@@ -1,20 +1,22 @@
 package ru.javawebinar.topjava.to;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import ru.javawebinar.topjava.model.AbstractBaseEntity;
 
 import java.time.LocalDateTime;
 
-public class MealTo {
-    private final Integer id;
+public class MealTo extends AbstractBaseEntity {
 
-    private final LocalDateTime dateTime;
+    private LocalDateTime dateTime;
 
-    private final String description;
+    private String description;
 
-    private final int calories;
+    private int calories;
 
-    @JsonIgnore
-    private final boolean excess;
+    private boolean excess;
+
+    public MealTo() {
+    }
 
     public MealTo(Integer id, LocalDateTime dateTime, String description, int calories, boolean excess) {
         this.id = id;
@@ -24,9 +26,6 @@ public class MealTo {
         this.excess = excess;
     }
 
-    public Integer getId() {
-        return id;
-    }
 
     public LocalDateTime getDateTime() {
         return dateTime;
@@ -42,6 +41,22 @@ public class MealTo {
 
     public boolean isExcess() {
         return excess;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setCalories(int calories) {
+        this.calories = calories;
+    }
+
+    public void setExcess(boolean excess) {
+        this.excess = excess;
     }
 
     @Override
