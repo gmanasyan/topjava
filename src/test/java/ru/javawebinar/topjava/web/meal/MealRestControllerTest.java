@@ -37,7 +37,7 @@ class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getTest() throws Exception {
-        mockMvc.perform(get(REST_URL+"/100007"))
+        mockMvc.perform(get(REST_URL+"/" + (MEAL1_ID + 5)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(contentJson(MEAL6));
@@ -45,7 +45,7 @@ class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void deleteTest() throws Exception {
-        mockMvc.perform(delete(REST_URL+"/100007"))
+        mockMvc.perform(delete(REST_URL+"/" + (MEAL1_ID + 5)))
                 .andExpect(status().isNoContent());
         assertMatch(service.getAll(USER_ID), MEAL5, MEAL4, MEAL3, MEAL2, MEAL1);
     }

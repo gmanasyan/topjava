@@ -35,7 +35,7 @@ public class MealRestController extends AbstractMealController {
 
     @GetMapping("")
     public List<MealTo> getAll() {
-        return MealsUtil.getWithExcess(mealService.getAll(SecurityUtil.authUserId()), SecurityUtil.authUserCaloriesPerDay());
+        return super.getAll();
     }
 
     @Override

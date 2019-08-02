@@ -19,14 +19,6 @@
         </property>
     </bean>
 
-    <bean id="conversionService"
-          class="org.springframework.context.support.ConversionServiceFactoryBean">
-        <property name="converters">
-            <set>
-                <bean class="ru.javawebinar.topjava.util.convert.StringToLocalDate"/>
-                <bean class="ru.javawebinar.topjava.util.convert.StringToLocalTime"/>
-            </set>
-        </property>
-    </bean>
+
 
 </beans>
