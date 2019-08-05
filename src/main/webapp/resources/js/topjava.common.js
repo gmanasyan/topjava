@@ -45,10 +45,32 @@ function save() {
         data: form.serialize()
     }).done(function () {
         $("#editRow").modal("hide");
-        updateTable();
+        filter();
         successNoty("Saved");
     });
 }
+
+function filter() {
+    filterForm = $('#filterForm');
+    $.ajax({
+        type: "POST",
+        url: context.ajaxUrl+"filter",
+        data: filterForm.serialize(),
+        dataType: "json"
+    }).done(function (data, status, jqXHR) {
+        context.datatableApi.clear().rows.add(data).draw();
+        successNoty("Filtered");
+    });
+}
+
+function clearFilter() {
+    filterForm = $('#filterForm');
+    filterForm.find(":input").val("");
+    updateTable();
+}
+
+
+
 
 let failedNote;
 
