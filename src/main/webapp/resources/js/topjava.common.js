@@ -33,9 +33,16 @@ function deleteRow(id) {
 }
 
 function updateTable() {
-    $.get(context.ajaxUrl, function (data) {
-        context.datatableApi.clear().rows.add(data).draw();
-    });
+
+    if ($('#filterForm').length) {
+        filter(); // from meals.js
+    } else
+    {
+        $.get(context.ajaxUrl, function (data) {
+            context.datatableApi.clear().rows.add(data).draw();
+        });
+    }
+
 }
 
 function save() {
@@ -45,30 +52,10 @@ function save() {
         data: form.serialize()
     }).done(function () {
         $("#editRow").modal("hide");
-        filter();
+        updateTable()
         successNoty("Saved");
     });
 }
-
-function filter() {
-    filterForm = $('#filterForm');
-    $.ajax({
-        type: "POST",
-        url: context.ajaxUrl+"filter",
-        data: filterForm.serialize(),
-        dataType: "json"
-    }).done(function (data, status, jqXHR) {
-        context.datatableApi.clear().rows.add(data).draw();
-        successNoty("Filtered");
-    });
-}
-
-function clearFilter() {
-    filterForm = $('#filterForm');
-    filterForm.find(":input").val("");
-    updateTable();
-}
-
 
 
 

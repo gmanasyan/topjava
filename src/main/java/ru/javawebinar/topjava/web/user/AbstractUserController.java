@@ -49,9 +49,8 @@ public abstract class AbstractUserController {
     }
 
     public void activityUpdate(int id, boolean active) {
-        User user = get(id);
-        user.setEnabled(active);
-        update(user, id);
-        log.debug("Update user state" + id + " " + active);
+        service.activityUpdate(id, active);
+        log.debug("Update user {} with state={}", id, active);
+
     }
 }

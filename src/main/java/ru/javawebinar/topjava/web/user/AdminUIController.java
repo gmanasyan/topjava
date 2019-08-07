@@ -42,8 +42,8 @@ public class AdminUIController extends AbstractUserController {
     @PostMapping(value = "/activity")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void activityUpdate(@RequestParam("userId") Integer id,
-                               @RequestParam("active") Integer active) {
-        super.activityUpdate(id, (active == 1) ? true : false);
+                               @RequestParam("active") boolean active) {
+        super.activityUpdate(id, active);
     }
 
 }
