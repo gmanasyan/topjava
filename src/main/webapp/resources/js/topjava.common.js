@@ -32,14 +32,17 @@ function deleteRow(id) {
     });
 }
 
-function updateTable() {
+function drawTable(data) {
+    context.datatableApi.clear().rows.add(data).draw();
+}
 
+function updateTable() {
     if ($('#filterForm').length) {
         filter(); // from meals.js
     } else
     {
         $.get(context.ajaxUrl, function (data) {
-            context.datatableApi.clear().rows.add(data).draw();
+            drawTable(data)
         });
     }
 

@@ -60,6 +60,7 @@ public class UserService {
     }
 
     @Transactional
+    @Cacheable("users")
     public void activityUpdate(int id, boolean active) {
         User user = get(id);
         user.setEnabled(active);

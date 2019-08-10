@@ -2,8 +2,8 @@
 $(function () {
 
     $(".activity").click(function () {
-        checkboxState = $(this).find(":checkbox").is(":checked")
-        activityUpdate($(this).parents('tr').attr("id"), checkboxState);
+        checkbox = $(this).find(":checkbox");
+        activityUpdate($(this).parents('tr').attr("id"), checkbox);
     });
 
     makeEditable({
@@ -48,7 +48,8 @@ $(function () {
 });
 
 
-function activityUpdate(userId, active) {
+function activityUpdate(userId, checkbox) {
+    active = checkbox.is(":checked");
     $.ajax({
         type: "POST",
         url: context.ajaxUrl+"activity",
@@ -56,10 +57,12 @@ function activityUpdate(userId, active) {
         dataType: "json",
         success: function () {
             $("#"+userId).attr("userActive", active);
-            state = (active == true) ? "Enabled" : "Disabled"
+            state = (active == true) ? "Enabled" : "Disabled";
             successNoty("User has been " + state);
         },
         error: function () {
+            if (active) checkbox.prop('checked', false);
+            else checkbox.prop('checked', true);
             failNoty("Error to update user state");
         }
     });

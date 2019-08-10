@@ -44,7 +44,7 @@ function filter() {
         data: filterForm.serialize(),
         dataType: "json"
     }).done(function (data, status, jqXHR) {
-        context.datatableApi.clear().rows.add(data).draw();
+        drawTable(data);
         successNoty("Filtered");
     });
 }
