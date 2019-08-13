@@ -58,8 +58,7 @@ public class MealService {
     public void update(MealTo mealTo, int userId) {
         Meal meal = get(mealTo.getId(), userId);
         meal.setCalories(mealTo.getCalories());
-        Assert.notNull(meal, "meal must not be null");
-        checkNotFoundWithId(repository.save(meal, userId), meal.getId());
+        update(meal, userId);
     }
 
     public Meal create(Meal meal, int userId) {
