@@ -12,12 +12,12 @@
     </c:forEach>
 
     function i18nInit(context) {
-        if (context = "user") {
+        if (context == "user") {
             i18n["addTitle"] = '<spring:message code="user.add"/>';
             i18n["editTitle"] = '<spring:message code="user.edit"/>';
         }
 
-        if (context = "meal") {
+        if (context == "meal") {
             i18n["addTitle"] = '<spring:message code="meal.add"/>';
             i18n["editTitle"] = '<spring:message code="meal.edit"/>';
         }
