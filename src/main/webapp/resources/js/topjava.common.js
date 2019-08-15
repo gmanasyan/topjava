@@ -2,21 +2,6 @@ let context, form;
 
 function makeEditable(ctx) {
 
-    jQuery('.datepicker').datetimepicker({
-        timepicker:false,
-        format:'Y-m-d'
-    });
-
-    jQuery('.timepicker').datetimepicker({
-        datepicker:false,
-        format:'H:i'
-    });
-
-    jQuery('.datetimepicker').datetimepicker({
-        format:'Y-m-d H:i'
-    });
-
-
     context = ctx;
     form = $('#detailsForm');
     $(document).ajaxError(function (event, jqXHR, options, jsExc) {
@@ -24,22 +9,7 @@ function makeEditable(ctx) {
     });
 
     // solve problem with cache in IE: https://stackoverflow.com/a/4303862/548473
-
     $.ajaxSetup({cache: false});
-
-    // $.ajaxSetup({
-    //     cache: false,
-    //     contents: {
-    //         mycustomtype: /mydate/
-    //     },
-    //     converters: {
-    //         "mycustomtype json": function( result ) {
-    //             result = result.replace(".", "/")
-    //             return result;
-    //         }
-    //     }
-    // });
-
 }
 
 function add() {
@@ -52,11 +22,10 @@ function updateRow(id) {
     $("#modalTitle").html(i18n["editTitle"]);
     $.get(context.ajaxUrl + id, function (data) {
         $.each(data, function (key, value) {
+            if (key == "dateTime") value = value.toString().replace("T", " ");
             form.find("input[name='" + key + "']").val(value);
+
         });
-        datetime = form.find("#dateTime").val();
-        datetime = datetime.replace("T", " ");
-        form.find("#dateTime").val(datetime);
         $('#editRow').modal();
     });
 
@@ -79,9 +48,12 @@ function updateTableByData(data) {
 }
 
 function save() {
-    datetime = form.find("#dateTime").val();
-    datetime = datetime.substr(0,16).replace(" ", "T");
-    form.find("#dateTime").val(datetime);
+    // datetime = form.find("#dateTime").val();
+    // datetime = datetime.substr(0,16).replace(" ", "T");
+    // form.find("#dateTime").val(datetime);
+
+    calories = form.find("#calories").val();
+    if (calories == "") form.find("#calories").val("0");
 
     $.ajax({
         type: "POST",

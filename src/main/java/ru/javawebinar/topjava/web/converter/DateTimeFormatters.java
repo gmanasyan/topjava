@@ -43,7 +43,11 @@ public class DateTimeFormatters {
 
         @Override
         public LocalDateTime parse(String text, Locale locale) {
-            return parseLocalDateTime(text);
+
+            String newDate =  text.substring(0,16).replace(" ", "T");
+
+            return parseLocalDateTime(newDate);
+
         }
 
         @Override

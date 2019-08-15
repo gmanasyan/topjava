@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
@@ -17,6 +18,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.StringJoiner;
+
+import ru.javawebinar.topjava.model.Validations.*;
+
+import static ru.javawebinar.topjava.util.ValidationUtil.checkBinding;
 
 @RestController
 @RequestMapping("/ajax/profile/meals")
@@ -42,26 +47,14 @@ public class MealUIController extends AbstractMealController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createOrUpdate(@Valid MealTo mealTo, BindingResult result) {
-        if (result.hasErrors()) {
-            StringJoiner joiner = new StringJoiner("<br>");
-            result.getFieldErrors().forEach(
-                    fe -> {
-                        String msg = fe.getDefaultMessage();
-                        if (msg != null) {
-                            if (!msg.startsWith(fe.getField())) {
-                                msg = fe.getField() + ' ' + msg;
-                            }
-                            joiner.add(msg);
-                        }
-                    });
-            return ResponseEntity.unprocessableEntity().body(joiner.toString());
-        }
+    public ResponseEntity<String> createOrUpdate(@Validated(GroupInput.class)Meal meal, BindingResult result) {
+        ResponseEntity<String> error = checkBinding(result);
+        if (error != null) return error;
 
-        if (mealTo.isNew()) {
-            super.create(MealsUtil.createNewFromTo(mealTo));
+        if (meal.isNew()) {
+            super.create(meal);
         } else
-            super.update(mealTo, mealTo.getId());
+            super.update(meal, meal.getId());
 
         return ResponseEntity.ok().build();
     }

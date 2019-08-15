@@ -1,22 +1,9 @@
 const userAjaxUrl = "ajax/admin/users/";
 
-function enable(chkbox, id) {
-    const enabled = chkbox.is(":checked");
-//  https://stackoverflow.com/a/22213543/548473
-    $.ajax({
-        url: userAjaxUrl + id,
-        type: "POST",
-        data: "enabled=" + enabled
-    }).done(function () {
-        chkbox.closest("tr").attr("data-userEnabled", enabled);
-        successNoty(enabled ? "common.enabled" : "common.disabled");
-    }).fail(function () {
-        $(chkbox).prop("checked", !enabled);
-    });
-}
-
 // $(document).ready(function () {
 $(function () {
+
+    i18nInit("user");
     makeEditable({
             ajaxUrl: userAjaxUrl,
             datatableApi: $("#datatable").DataTable({
@@ -89,3 +76,18 @@ $(function () {
         }
     );
 });
+
+function enable(chkbox, id) {
+    const enabled = chkbox.is(":checked");
+//  https://stackoverflow.com/a/22213543/548473
+    $.ajax({
+        url: userAjaxUrl + id,
+        type: "POST",
+        data: "enabled=" + enabled
+    }).done(function () {
+        chkbox.closest("tr").attr("data-userEnabled", enabled);
+        successNoty(enabled ? "common.enabled" : "common.disabled");
+    }).fail(function () {
+        $(chkbox).prop("checked", !enabled);
+    });
+}
