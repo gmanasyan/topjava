@@ -96,6 +96,23 @@ class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void updateExistingEmail() throws Exception {
+        User updated = new User(USER);
+        updated.setName("UpdatedName");
+        updated.setRoles(Collections.singletonList(Role.ROLE_ADMIN));
+        updated.setEmail("admin@gmail.com");
+        updated.setPassword("qweqwe");
+
+        mockMvc.perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(updated)))
+                .andDo(print()) ;
+
+    }
+
+
+    @Test
     void createWithLocation() throws Exception {
         User expected = new User(null, "New", "new@gmail.com", "newPass",  2300, Role.ROLE_USER, Role.ROLE_ADMIN);
         ResultActions action = mockMvc.perform(MockMvcRequestBuilders.post(REST_URL)
