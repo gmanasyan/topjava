@@ -1,6 +1,16 @@
 let context, form;
 
+
+$(function() {
+    var url = $(location).attr('href');
+    if (url.indexOf("?") > 0) {
+        url = url.substr(0, url.indexOf("?"));
+    }
+    $("#setlocale").append('<a href=\"'+url+'?lang=ru\">RU</a> | <a href=\"'+url+'?lang=en\">EN</a>');
+});
+
 function makeEditable(ctx) {
+
     context = ctx;
     context.datatableApi = $("#datatable").DataTable(
         // https://api.jquery.com/jquery.extend/#jQuery-extend-deep-target-object1-objectN

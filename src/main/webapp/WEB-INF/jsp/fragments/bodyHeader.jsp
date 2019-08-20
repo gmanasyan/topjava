@@ -4,7 +4,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <nav class="navbar navbar-dark bg-dark py-0">
-    <div class="container">
+    <div class="container" >
         <a href="meals" class="navbar-brand"><img src="resources/images/icon-meal.png"> <spring:message code="app.title"/></a>
         <sec:authorize access="isAuthenticated()">
             <form:form class="form-inline my-2" action="logout" method="post">
@@ -15,6 +15,7 @@
                 <button class="btn btn-primary my-1" type="submit">
                     <span class="fa fa-sign-out"></span>
                 </button>
+                <div id="setlocale" style="width:75px; text-align: right; color:white"></div>
             </form:form>
         </sec:authorize>
         <sec:authorize access="isAnonymous()">
@@ -25,6 +26,9 @@
                     <span class="fa fa-sign-in"></span>
                 </button>
             </form:form>
+            <div id="setlocale" style="width:75px; text-align: right;  color:white"></div>
         </sec:authorize>
+
     </div>
+
 </nav>

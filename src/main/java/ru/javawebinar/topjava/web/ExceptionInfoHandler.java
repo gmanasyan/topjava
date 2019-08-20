@@ -62,7 +62,10 @@ public class ExceptionInfoHandler {
           //  errorInfo.setDetail(env.getProperty("error.password"));
             errorInfo.setDetail("User with this email already exists");
         }
-
+        if (errorInfo.getDetail().contains("(user_id, date_time)")) {
+            //  errorInfo.setDetail(env.getProperty("error.password"));
+            errorInfo.setDetail("Meal with this data and time already exist");
+        }
         return errorInfo;
     }
 
