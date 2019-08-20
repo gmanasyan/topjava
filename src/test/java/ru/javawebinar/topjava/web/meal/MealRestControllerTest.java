@@ -93,8 +93,9 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(updated))
                 .with(userHttpBasic(USER)))
                 .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(content().string(containsString("MethodArgumentNotValidException")));;
+                .andExpect(content().string(containsString("MethodArgumentNotValidException")));
     }
 
     @Test

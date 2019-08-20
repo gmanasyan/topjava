@@ -3,8 +3,11 @@ package ru.javawebinar.topjava.web;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -27,10 +30,15 @@ import static ru.javawebinar.topjava.util.exception.ErrorType.*;
 @RestControllerAdvice(annotations = RestController.class)
 @Order(Ordered.HIGHEST_PRECEDENCE + 5)
 public class ExceptionInfoHandler {
+
+    @Autowired
+    private Environment env;
+
     private static Logger log = LoggerFactory.getLogger(ExceptionInfoHandler.class);
 
     //https://dzone.com/articles/spring-31-valid-requestbody
     @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
     public ErrorInfo
     handleMethodArgumentNotValidException(HttpServletRequest req, MethodArgumentNotValidException e ) {
         //e.getBindingResult();
@@ -48,7 +56,14 @@ public class ExceptionInfoHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
         log.debug(e.toString());
-        return logAndGetErrorInfo(req, e, true, DATA_ERROR);
+        ErrorInfo errorInfo = logAndGetErrorInfo(req, e, true, DATA_ERROR);
+
+        if (errorInfo.getDetail().contains("(email)")) {
+          //  errorInfo.setDetail(env.getProperty("error.password"));
+            errorInfo.setDetail("User with this email already exists");
+        }
+
+        return errorInfo;
     }
 
     @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)  // 422

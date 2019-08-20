@@ -11,6 +11,7 @@ import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import java.util.Collections;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -95,22 +96,51 @@ class AdminRestControllerTest extends AbstractControllerTest {
         assertMatch(userService.get(USER_ID), updated);
     }
 
+
+    @Test
+    void updateValidationError() throws Exception {
+        User updated = new User(USER);
+        updated.setName("UpdatedName");
+        updated.setEmail("admingmail.com");
+        updated.setPassword("qweqwe");
+
+        mockMvc.perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(jsonWithPassword(updated, "qweqwe")))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
     @Test
     void updateExistingEmail() throws Exception {
         User updated = new User(USER);
         updated.setName("UpdatedName");
-        updated.setRoles(Collections.singletonList(Role.ROLE_ADMIN));
         updated.setEmail("admin@gmail.com");
         updated.setPassword("qweqwe");
 
         mockMvc.perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
-                .content(JsonUtil.writeValue(updated)))
+                //.content(JsonUtil.writeValue(updated)))
+                .content(jsonWithPassword(updated, "qweqwe")))
                 .andDo(print()) ;
+
+        assertMatch(userService.get(USER_ID), updated);
 
     }
 
+
+    @Test
+    void createValidationError() throws Exception {
+        User expected = new User(null, "New", "newgmail.com", "newPass",  2300, Role.ROLE_USER, Role.ROLE_ADMIN);
+        ResultActions action = mockMvc.perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(jsonWithPassword(expected, "newPass")))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+ }
 
     @Test
     void createWithLocation() throws Exception {
