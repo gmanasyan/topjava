@@ -90,15 +90,16 @@ class AdminRestControllerTest extends AbstractControllerTest {
         User updated = new User(USER);
         updated.setName("UpdatedName");
         updated.setRoles(Collections.singletonList(Role.ROLE_ADMIN));
+        updated.setPassword("123123");
         mockMvc.perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
-                .content(JsonUtil.writeValue(updated)))
+                .content(jsonWithPassword(updated, "123123")))
+                //.content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isNoContent());
 
         assertMatch(userService.get(USER_ID), updated);
     }
-
 
     @Test
     void updateValidationError() throws Exception {

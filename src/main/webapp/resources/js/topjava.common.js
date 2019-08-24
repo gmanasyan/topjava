@@ -1,6 +1,5 @@
 let context, form;
 
-
 $(function() {
     var url = $(location).attr('href');
     if (url.indexOf("?") > 0) {

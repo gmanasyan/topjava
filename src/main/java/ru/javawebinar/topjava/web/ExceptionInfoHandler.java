@@ -5,6 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
@@ -34,6 +37,9 @@ public class ExceptionInfoHandler {
     @Autowired
     private Environment env;
 
+    @Autowired
+    private MessageSource messageSource;
+
     private static Logger log = LoggerFactory.getLogger(ExceptionInfoHandler.class);
 
     //https://dzone.com/articles/spring-31-valid-requestbody
@@ -56,17 +62,7 @@ public class ExceptionInfoHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
         log.debug(e.toString());
-        ErrorInfo errorInfo = logAndGetErrorInfo(req, e, true, DATA_ERROR);
-
-        if (errorInfo.getDetail().contains("(email)")) {
-          //  errorInfo.setDetail(env.getProperty("error.password"));
-            errorInfo.setDetail("User with this email already exists");
-        }
-        if (errorInfo.getDetail().contains("(user_id, date_time)")) {
-            //  errorInfo.setDetail(env.getProperty("error.password"));
-            errorInfo.setDetail("Meal with this data and time already exist");
-        }
-        return errorInfo;
+        return logAndGetErrorInfo(req, e, true, DATA_ERROR);
     }
 
     @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)  // 422
@@ -82,13 +78,25 @@ public class ExceptionInfoHandler {
     }
 
     //    https://stackoverflow.com/questions/538870/should-private-helper-methods-be-static-if-they-can-be-static
-    private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType) {
+    private ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType) {
         Throwable rootCause = ValidationUtil.getRootCause(e);
         if (logException) {
             log.error(errorType + " at request " + req.getRequestURL(), rootCause);
         } else {
             log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
         }
+
+        if (rootCause.toString().contains("(email)")) {
+            //  errorInfo.setDetail(env.getProperty("error.password"));
+            return new ErrorInfo(req.getRequestURL(), errorType,
+                    messageSource.getMessage("error.password",null, LocaleContextHolder.getLocale()));
+        }
+        if (rootCause.toString().contains("(user_id, date_time)")) {
+            //errorInfo.setDetail("Meal with this data and time already exist");
+            return new ErrorInfo(req.getRequestURL(), errorType,
+                    messageSource.getMessage("error.datetime",null, LocaleContextHolder.getLocale()));
+        }
+
         return new ErrorInfo(req.getRequestURL(), errorType, rootCause.toString());
     }
 }

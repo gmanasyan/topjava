@@ -36,9 +36,9 @@ public class AdminRestController extends AbstractUserController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void createWithLocation(@Valid @RequestBody User user) {
-        User created = super.create(user);
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public User createWithLocation(@Valid @RequestBody User user) {
+        return super.create(user);
     }
 
     @Override

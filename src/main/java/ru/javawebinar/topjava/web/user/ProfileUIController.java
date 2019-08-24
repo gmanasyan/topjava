@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.web.user;
 
 import org.postgresql.util.PSQLException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -33,18 +34,13 @@ public class ProfileUIController extends AbstractUserController {
         } else {
             try {
                 super.update(userTo, SecurityUtil.authUserId());
-            } catch (Exception e) {
+            } catch (DataIntegrityViolationException e) {
 
                 Throwable rootCause = ValidationUtil.getRootCause(e);
 
                 log.debug(rootCause.toString());
                 if (rootCause.toString().contains("(email)")) {
                     result.rejectValue("email", "error.password");
-                } else {
-                    result.rejectValue("name", "error.generalsqlerror");
-                    model.addAttribute("exception", rootCause);
-                    model.addAttribute("message", rootCause.toString());
-                    return "exception/exception";
                 }
 
                 return "profile";

@@ -40,47 +40,4 @@ public class GlobalControllerExceptionHandler {
         return mav;
     }
 
-    @ResponseStatus(value = HttpStatus.CONFLICT)  // 409
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ModelAndView conflict(HttpServletRequest req, DataIntegrityViolationException e) {
-        class Status {
-            public String error;
-            public String errorMessage;
-
-            public Status(String error, String errorMessage) {
-                this.error = error;
-                this.errorMessage = errorMessage;
-            }
-        }
-
-       log.debug(e.toString());
-
-        Throwable rootCause = ValidationUtil.getRootCause(e);
-        ModelAndView mav = new ModelAndView("profile");
-        mav.addObject("exception", rootCause);
-        mav.addObject("message", rootCause.toString());
-        //mav.addObject("status", logAndGetErrorInfo(req, e, false, VALIDATION_ERROR))
-
-
-
-
-        Status status = new Status("error", "Test Error Message");
-        mav.addObject("status", status);
-
-        AuthorizedUser authorizedUser = SecurityUtil.safeGet();
-        if (authorizedUser != null) {
-            mav.addObject("userTo", authorizedUser.getUserTo());
-        }
-       return mav;
-    }
-
-    private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType) {
-        Throwable rootCause = ValidationUtil.getRootCause(e);
-        if (logException) {
-            log.error(errorType + " at request " + req.getRequestURL(), rootCause);
-        } else {
-            log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
-        }
-        return new ErrorInfo(req.getRequestURL(), errorType, rootCause.toString());
-    }
 }
